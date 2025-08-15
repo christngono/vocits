@@ -1,6 +1,7 @@
 // controllers/vocitsController.js
 import Vocit from '../models/vocit.js';
 
+
 // 📌 Créer un nouveau vocit
 export const createVocit = async (req, res) => {
   try {
