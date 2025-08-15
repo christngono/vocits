@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: Newapi
+    env: node
+    plan: starter
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGODB_URI
+        value: mongodb+srv://vocitbase:t0LaQ1jY3w1YBZfY@cluster0.gplsr9q.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+        value: supersecret@344
