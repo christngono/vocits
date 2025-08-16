@@ -10,12 +10,15 @@ import swaggerUi from "swagger-ui-express";
 dotenv.config();
 const app = express();
 
-// 📌 Dossier public pour les fichiers uploadés
-app.use('/uploads', express.static('uploads'));
-
 // 📌 Middleware global
 app.use(express.json());
-app.use(cors({ origin: '*' }));
+
+// 📌 CORS global pour l'API
+app.use(cors({ origin: '*' })); // tu peux restreindre à ton frontend plus tard
+
+// 📌 Dossier public pour les fichiers uploadés
+// 🔹 CORS spécifique pour /uploads afin que les images soient accessibles partout
+app.use('/uploads', cors(), express.static('uploads'));
 
 // 📌 Configuration Swagger
 const swaggerOptions = {
