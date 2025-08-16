@@ -7,14 +7,17 @@ export const createVocit = async (req, res) => {
   try {
     const { title, content, categorie, tags } = req.body;
 
+    // Domaine fixe (ou via .env pour être plus flexible)
+    const baseUrl = process.env.BASE_URL || 'https://huit.onrender.com';
+
     // 📌 Le chemin public de l'image
     let imagePath = null;
     if (req.file) {
-      imagePath = `/uploads/${req.file.filename}`; // chemin accessible
+      imagePath = `${baseUrl}/uploads/${req.file.filename}`;
     }
 
     const newVocit = new Vocit({
-      image: imagePath, // ou media si tu veux changer le nom du champ
+      image: imagePath, // ou media si tu préfères
       title,
       content,
       categorie,
@@ -24,9 +27,11 @@ export const createVocit = async (req, res) => {
     await newVocit.save();
     res.status(201).json(newVocit);
   } catch (error) {
+    console.error("Erreur création vocit:", error);
     res.status(500).json({ message: 'Erreur lors de la création du vocit', error });
   }
 };
+
 
 
 // 📌 Récupérer tous les vocits
