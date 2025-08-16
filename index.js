@@ -15,7 +15,7 @@ app.use('/uploads', express.static('uploads'));
 
 // 📌 Middleware global
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: '*' }));
 
 // 📌 Configuration Swagger
 const swaggerOptions = {
