@@ -34,15 +34,47 @@ export const createVocit = async (req, res) => {
 
 
 
-// 📌 Récupérer tous les vocits
+// 📌 Récupérer tous les vocits et tous les stats
+// 📌 Récupérer tous les vocits avec leurs statistiques
 export const getAllVocits = async (req, res) => {
   try {
     const vocits = await Vocit.find().sort({ createdAt: -1 });
-    res.status(200).json(vocits);
+
+    // Transformer chaque vocit avec ses stats
+    const vocitsWithStats = vocits.map((vocit) => {
+      const totalVotes = vocit.votePour + vocit.voteContre + vocit.voteAbstention;
+
+      const percent = (count) =>
+        totalVotes > 0 ? ((count / totalVotes) * 100).toFixed(2) : 0;
+
+      return {
+        ...vocit._doc, // 📌 inclure toutes les données du vocit
+        stats: {
+          totalVotes,
+          pour: {
+            count: vocit.votePour,
+            percentage: percent(vocit.votePour),
+          },
+          contre: {
+            count: vocit.voteContre,
+            percentage: percent(vocit.voteContre),
+          },
+          abstention: {
+            count: vocit.voteAbstention,
+            percentage: percent(vocit.voteAbstention),
+          },
+        },
+      };
+    });
+
+    res.status(200).json(vocitsWithStats);
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la récupération des vocits', error });
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des vocits", error });
   }
 };
+
 
 // 📌 Récupérer un vocit par ID
 export const getVocitById = async (req, res) => {
@@ -132,37 +164,6 @@ export const searchVocits = async (req, res) => {
     res.status(200).json(vocits);
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la recherche', error });
-  }
-};
-export const getVocitStats = async (req, res) => {
-  try {
-    const vocit = await Vocit.findById(req.params.id);
-    if (!vocit) return res.status(404).json({ message: 'Vocit introuvable' });
-
-    const totalVotes = vocit.votePour + vocit.voteContre + vocit.voteAbstention;
-
-    // 📌 Éviter la division par zéro
-    const percent = (count) => totalVotes > 0 ? ((count / totalVotes) * 100).toFixed(2) : 0;
-
-    const stats = {
-      totalVotes,
-      pour: {
-        count: vocit.votePour,
-        percentage: percent(vocit.votePour)
-      },
-      contre: {
-        count: vocit.voteContre,
-        percentage: percent(vocit.voteContre)
-      },
-      abstention: {
-        count: vocit.voteAbstention,
-        percentage: percent(vocit.voteAbstention)
-      }
-    };
-
-    res.status(200).json(stats);
-  } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la récupération des statistiques', error });
   }
 };
 

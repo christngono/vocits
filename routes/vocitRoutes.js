@@ -16,7 +16,7 @@ import {
   deleteVocit,
   voteVocit,
   searchVocits,
-  getVocitStats
+
 } from '../controllers/vocitController.js';
 import { verifyToken, isAdmin } from "../middlewares/authMiddleware.js";
 
@@ -105,32 +105,85 @@ router.post('/', verifyToken, isAdmin, upload.single('image'), createVocit);
  *       200:
  *         description: Liste des vocits
  */
-router.get('/', getAllVocits);
+router.get('/all', getAllVocits);
 
 /**
  * @swagger
- * /api/vocits/search:
+ * /api/vocits/all:
  *   get:
- *     summary: Rechercher des vocits
+ *     summary: Récupérer tous les vocits avec leurs statistiques
  *     tags: [Vocits]
- *     parameters:
- *       - in: query
- *         name: q
- *         schema:
- *           type: string
- *         description: Terme à rechercher dans le titre
- *       - in: query
- *         name: categorie
- *         schema:
- *           type: string
- *       - in: query
- *         name: tag
- *         schema:
- *           type: string
  *     responses:
  *       200:
- *         description: Résultats de la recherche
+ *         description: Liste de tous les vocits avec leurs informations et statistiques de votes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     example: "66d0e9d2a2e9..."
+ *                   titre:
+ *                     type: string
+ *                     example: "Mon premier vocit"
+ *                   description:
+ *                     type: string
+ *                     example: "Lorem ipsum dolor sit amet"
+ *                   votePour:
+ *                     type: integer
+ *                     example: 10
+ *                   voteContre:
+ *                     type: integer
+ *                     example: 5
+ *                   voteAbstention:
+ *                     type: integer
+ *                     example: 2
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                   stats:
+ *                     type: object
+ *                     properties:
+ *                       totalVotes:
+ *                         type: integer
+ *                         example: 17
+ *                       pour:
+ *                         type: object
+ *                         properties:
+ *                           count:
+ *                             type: integer
+ *                             example: 10
+ *                           percentage:
+ *                             type: number
+ *                             format: float
+ *                             example: 58.82
+ *                       contre:
+ *                         type: object
+ *                         properties:
+ *                           count:
+ *                             type: integer
+ *                             example: 5
+ *                           percentage:
+ *                             type: number
+ *                             format: float
+ *                             example: 29.41
+ *                       abstention:
+ *                         type: object
+ *                         properties:
+ *                           count:
+ *                             type: integer
+ *                             example: 2
+ *                           percentage:
+ *                             type: number
+ *                             format: float
+ *                             example: 11.76
+ *       500:
+ *         description: Erreur lors de la récupération des vocits
  */
+
 router.get('/search', searchVocits);
 
 /**
@@ -266,6 +319,6 @@ router.post('/:id/vote', verifyToken, voteVocit);
  *       404:
  *         description: Vocit introuvable
  */
-router.get('/:id/stats', getVocitStats);
+
 
 export default router;

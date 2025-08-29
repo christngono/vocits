@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
-const statusSchema = new Schema ({
-    title : {type: String, require:String},
-    image:{type:String, require:String, enum:['image','video']
-        
-    },
-    },{ timestamps: true })
 
-    export default model('status', statusSchema);
+const statusSchema = new Schema({
+  title: { type: String, required: true },
+  image: { type: String, required: true }, // chemin du fichier
+  type: { type: String, enum: ['image', 'video'], required: true } // type fichier
+}, { timestamps: true });
+
+export default model('status', statusSchema);

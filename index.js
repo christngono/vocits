@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import authRoutes from './routes/authRoutes.js';
 import vocitRoutes from './routes/vocitRoutes.js';
+import statusRoutes from './routes/statusRoutes.js'; // 🔹 Import statusRoutes
 import cors from "cors";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
@@ -14,11 +15,11 @@ const app = express();
 app.use(express.json());
 
 // 📌 CORS global pour l'API
-app.use(cors({ origin: '*' })); // tu peux restreindre à ton frontend plus tard
+app.use(cors({ origin: '*' }));
 
 // 📌 Dossier public pour les fichiers uploadés
-// 🔹 CORS spécifique pour /uploads afin que les images soient accessibles partout
 app.use('/uploads', cors(), express.static('uploads'));
+app.use('/uploadsstatus', cors(), express.static('uploadsstatus')); // 🔹 dossier status
 
 // 📌 Configuration Swagger
 const swaggerOptions = {
@@ -31,10 +32,10 @@ const swaggerOptions = {
     },
     servers: [
       { url: "http://localhost:5000" },
-      { url: "https://huit.onrender.com" } // 🔹 URL production
+      { url: "https://huit.onrender.com" }
     ],
   },
-  apis: ["./routes/*.js"], // 🔹 Analyse les fichiers de routes pour JSDoc
+  apis: ["./routes/*.js"],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
@@ -51,6 +52,7 @@ app.get("/api-docs.json", (req, res) => {
 // 📌 Routes API
 app.use('/api/auth', authRoutes);
 app.use('/api/vocits', vocitRoutes);
+app.use('/api/status', statusRoutes); // 🔹 Ajout route status
 
 // 📌 Connexion MongoDB + Démarrage serveur
 mongoose.connect(process.env.MONGO_URI)
