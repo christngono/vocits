@@ -1,6 +1,5 @@
 import Status from "../models/status.js";
 
-
 // 📌 Créer un nouveau status
 export const createStatus = async (req, res) => {
   try {
@@ -11,8 +10,12 @@ export const createStatus = async (req, res) => {
     if (!title) return res.status(400).json({ message: "Le titre est requis" });
     if (!req.file) return res.status(400).json({ message: "Fichier requis" });
 
-    const fileUrl = `/uploadsstatus/${req.file.filename}`;
-    const type = req.file.mimetype.startsWith('image/') ? 'image' : 'video';
+    // Domaine fixe (ou récupéré depuis .env)
+    const baseUrl = process.env.BASE_URL || "https://huit.onrender.com";
+
+    // URL complète du fichier (image ou vidéo)
+    const fileUrl = `${baseUrl}/uploadsstatus/${req.file.filename}`;
+    const type = req.file.mimetype.startsWith("image/") ? "image" : "video";
 
     const status = new Status({ title, image: fileUrl, type });
     await status.save();
@@ -23,7 +26,6 @@ export const createStatus = async (req, res) => {
     res.status(500).json({ message: "Erreur lors de la création du status", error });
   }
 };
-
 
 // 📌 Récupérer tous les status
 export const getAllStatus = async (req, res) => {
@@ -50,10 +52,12 @@ export const getStatusById = async (req, res) => {
 export const updateStatus = async (req, res) => {
   try {
     const { title } = req.body;
+    const baseUrl = process.env.BASE_URL || "https://huit.onrender.com";
+
     let updateData = { title };
 
     if (req.file) {
-      updateData.image = `/uploadsstatus/${req.file.filename}`;
+      updateData.image = `${baseUrl}/uploadsstatus/${req.file.filename}`;
     }
 
     const status = await Status.findByIdAndUpdate(req.params.id, updateData, {
